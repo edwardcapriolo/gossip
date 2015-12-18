@@ -14,6 +14,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.management.Notification;
 import javax.management.NotificationListener;
 
+import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 
 import com.google.code.gossip.GossipMember;
@@ -43,6 +44,7 @@ public abstract class GossipManager extends Thread implements NotificationListen
           Class<? extends ActiveGossipThread> activeGossipThreadClass, String address, int port,
           String id, GossipSettings settings, List<GossipMember> gossipMembers,
           GossipListener listener) {
+    BasicConfigurator.configure();
     _passiveGossipThreadClass = passiveGossipThreadClass;
     _activeGossipThreadClass = activeGossipThreadClass;
     _settings = settings;
