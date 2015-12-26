@@ -45,7 +45,7 @@ public class GossipService {
           List<GossipMember> gossipMembers, GossipSettings settings, GossipListener listener)
           throws InterruptedException, UnknownHostException {
     _gossipManager = new RandomGossipManager(ipAddress, port, id, settings, gossipMembers, listener);
-    LOGGER.setLevel(Level.toLevel(logLevel, Level.OFF));
+    LOGGER.setLevel(Level.toLevel(logLevel, Level.DEBUG));
   }
 
   public void start() {
