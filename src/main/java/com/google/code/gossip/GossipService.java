@@ -4,6 +4,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import com.google.code.gossip.event.GossipListener;
@@ -44,6 +45,7 @@ public class GossipService {
           List<GossipMember> gossipMembers, GossipSettings settings, GossipListener listener)
           throws InterruptedException, UnknownHostException {
     _gossipManager = new RandomGossipManager(ipAddress, port, id, settings, gossipMembers, listener);
+    LOGGER.setLevel(Level.toLevel(logLevel, Level.DEBUG));
   }
 
   public void start() {
