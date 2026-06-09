@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>io.teknek.gossip</groupId>
 		<artifactId>gossip-parent</artifactId>
-		<version>0.1.3</version>
+		<version>0.1.4-SNAPSHOT</version>
 	</parent>
 
 	<name>Gossip Examples</name>
