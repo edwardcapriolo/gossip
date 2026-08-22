@@ -22,13 +22,16 @@ public class ShutdownMessage extends Message {
     return shutdownAtNanos;
   }
 
+  /**
+   * @param shutdownAtNanos shutdown time in milliseconds. The method name is retained for wire compatibility.
+   */
   public void setShutdownAtNanos(long shutdownAtNanos) {
     this.shutdownAtNanos = shutdownAtNanos;
   }
 
   @Override
   public String toString() {
-    return "ShutdownMessage [shutdownAtNanos=" + shutdownAtNanos + ", nodeId=" + nodeId + "]";
+    return "ShutdownMessage [shutdownAtMillis=" + shutdownAtNanos + ", nodeId=" + nodeId + "]";
   }
   
 }

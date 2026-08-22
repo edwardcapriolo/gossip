@@ -60,7 +60,7 @@ public abstract class AbstractActiveGossiper {
     }
     ShutdownMessage m = new ShutdownMessage();
     m.setNodeId(me.getId());
-    m.setShutdownAtNanos(gossipManager.getClock().nanoTime());
+    m.setShutdownAtNanos(gossipManager.getClock().currentTimeMillis());
     gossipCore.sendOneWay(m, target.getUri());
   }
 
@@ -201,7 +201,7 @@ public abstract class AbstractActiveGossiper {
       return;
     }
     long startTime = System.currentTimeMillis();
-    me.setHeartbeat(System.nanoTime());
+    me.setHeartbeat(gossipManager.getClock().currentTimeMillis());
     UdpActiveGossipMessage message = new UdpActiveGossipMessage();
     message.setUriFrom(gossipManager.getMyself().getUri().toASCIIString());
     message.setUuid(UUID.randomUUID().toString());

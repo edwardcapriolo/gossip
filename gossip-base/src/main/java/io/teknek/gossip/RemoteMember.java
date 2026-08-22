@@ -24,7 +24,7 @@ public class RemoteMember extends Member {
   }
 
   public RemoteMember(String clusterName, URI uri, String id) {
-    super(clusterName, uri, id, System.nanoTime(), new HashMap<String,String>());
+    super(clusterName, uri, id, System.currentTimeMillis(), new HashMap<String,String>());
   }
 
 }

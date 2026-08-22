@@ -190,6 +190,30 @@ public class StartupSettings {
     GossipSettings gossipSettings = new GossipSettings(gossipInterval, cleanupInterval, windowSize,
             minSamples, convictThreshold, distribution, bulkTransfer);
     gossipSettings.setBulkTransferSize(bulkTransferSize);
+    if (jsonObject.has("active_gossip_class")) {
+      gossipSettings.setActiveGossipClass(jsonObject.get("active_gossip_class").textValue());
+    }
+    if (jsonObject.has("active_gossip_properties")) {
+      gossipSettings.setActiveGossipProperties(readStringMap(jsonObject.get("active_gossip_properties")));
+    }
+    if (jsonObject.has("path_to_ring_state")) {
+      gossipSettings.setPathToRingState(jsonObject.get("path_to_ring_state").textValue());
+    }
+    if (jsonObject.has("persist_ring_state")) {
+      gossipSettings.setPersistRingState(jsonObject.get("persist_ring_state").booleanValue());
+    }
+    if (jsonObject.has("path_to_data_state")) {
+      gossipSettings.setPathToDataState(jsonObject.get("path_to_data_state").textValue());
+    }
+    if (jsonObject.has("persist_data_state")) {
+      gossipSettings.setPersistDataState(jsonObject.get("persist_data_state").booleanValue());
+    }
+    if (jsonObject.has("path_to_key_store")) {
+      gossipSettings.setPathToKeyStore(jsonObject.get("path_to_key_store").textValue());
+    }
+    if (jsonObject.has("sign_messages")) {
+      gossipSettings.setSignMessages(jsonObject.get("sign_messages").booleanValue());
+    }
     if (transportClass != null) {
       gossipSettings.setTransportManagerClass(transportClass);
     }
@@ -203,13 +227,24 @@ public class StartupSettings {
     while (it.hasNext()){
       JsonNode child = it.next();
       URI uri3 = new URI(child.get("uri").textValue());
+      String memberId = child.has("id") ? child.get("id").asText() : "";
       RemoteMember member = new RemoteMember(child.get("cluster").asText(),
-              uri3, "", 0, new HashMap<String,String>());
+              uri3, memberId, 0, new HashMap<String,String>());
       settings.addGossipMember(member);
       configMembersDetails += member.computeAddress();
       configMembersDetails += ", ";
     }
     log.info("{}]", configMembersDetails);
     return settings;
+  }
+
+  private static Map<String, String> readStringMap(JsonNode node) {
+    Map<String, String> result = new HashMap<String, String>();
+    Iterator<Entry<String, JsonNode>> fields = node.fields();
+    while (fields.hasNext()) {
+      Entry<String, JsonNode> entry = fields.next();
+      result.put(entry.getKey(), entry.getValue().asText());
+    }
+    return result;
   }
 }
