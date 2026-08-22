@@ -45,7 +45,7 @@ public class LocalMember extends Member {
   public String toString() {
     Double d = null;
     try {
-      d = detect(System.nanoTime());
+      d = detect(System.currentTimeMillis());
     } catch (RuntimeException ex) {}
     return "LocalGossipMember [uri=" + uri + ", heartbeat=" + heartbeat + ", clusterName="
             + clusterName + ", id=" + id + ", currentdetect=" + d  +" ]";

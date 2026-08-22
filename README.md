@@ -107,6 +107,49 @@ manager.init();
 manager.shutdown();
 ```
 
+## Spring Boot HTTP Gossip
+
+Spring Boot applications can add `gossip-spring-boot-starter` and point it at the existing gossip JSON settings file:
+
+```properties
+gossip.settings-location=file:node-a.json
+```
+
+When `gossip.settings-location` is present, the starter loads `StartupSettings.fromJSONFile(...)`, starts a `GossipManager` bean, and exposes HTTP gossip endpoints. The JSON file remains the source of truth for cluster name, node id, local URI, seed members, intervals, persistence, protocol class, and other gossip settings. The starter only changes the transport manager to Spring HTTP.
+
+Use `http://` URIs in the JSON when running through Spring:
+
+```json
+[{
+  "cluster": "spring-demo",
+  "id": "node-a",
+  "uri": "http://127.0.0.1:18081",
+  "properties": {},
+  "gossip_interval": 500,
+  "cleanup_interval": 5000,
+  "window_size": 1000,
+  "minimum_samples": 5,
+  "convict_threshold": 2.6,
+  "distribution": "exponential",
+  "persist_ring_state": false,
+  "persist_data_state": false,
+  "members": [
+    {"cluster": "spring-demo", "id": "node-b", "uri": "http://127.0.0.1:18082"}
+  ]
+}]
+```
+
+The starter exposes:
+
+* `POST /gossip/message` for node-to-node gossip messages.
+* `GET /gossip/status` for a simple JSON cluster view.
+
+The `gossip-spring-example` module includes a small status page. To run two local HTTP gossip nodes:
+
+```bash
+./run-gossip-spring-example.sh
+```
+
 ## Data Model
 
 Teknek Gossip supports two data scopes.

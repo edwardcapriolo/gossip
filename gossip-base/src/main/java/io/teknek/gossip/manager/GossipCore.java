@@ -227,18 +227,20 @@ public class GossipCore implements GossipCoreConstants {
     if (LOGGER.isDebugEnabled()){
       debugState(senderMember, remoteList);
     }
+    removeMembersWithSameIdDifferentUri(senderMember.getId(), senderMember.getUri());
     for (LocalMember i : gossipManager.getDeadMembers()) {
       if (i.getId().equals(senderMember.getId())) {
         LOGGER.debug("{} contacted by dead member {}", gossipManager.getMyself(), senderMember.getUri());
         i.recordHeartbeat(senderMember.getHeartbeat());
         i.setHeartbeat(senderMember.getHeartbeat());
-        //TODO consider forcing an UP here
+        gossipManager.getMembers().put(i, GossipState.UP);
       }
     }
     for (Member remoteMember : remoteList) {
       if (remoteMember.getId().equals(gossipManager.getMyself().getId())) {
         continue;
       }
+      removeMembersWithSameIdDifferentUri(remoteMember.getId(), remoteMember.getUri());
       LocalMember aNewMember = new LocalMember(remoteMember.getClusterName(),
       remoteMember.getUri(),
       remoteMember.getId(),
@@ -261,6 +263,16 @@ public class GossipCore implements GossipCoreConstants {
     }
     if (LOGGER.isDebugEnabled()){
       debugState(senderMember, remoteList);
+    }
+  }
+
+  private void removeMembersWithSameIdDifferentUri(String id, URI uri) {
+    for (Entry<LocalMember, GossipState> localMember : gossipManager.getMembers().entrySet()) {
+      LocalMember member = localMember.getKey();
+      if (member.getId().equals(id) && !member.getUri().equals(uri)) {
+        LOGGER.info("Replacing gossip member id={} oldUri={} newUri={}", id, member.getUri(), uri);
+        gossipManager.getMembers().remove(member);
+      }
     }
   }
 

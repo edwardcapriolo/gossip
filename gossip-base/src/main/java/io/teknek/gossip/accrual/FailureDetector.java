@@ -11,7 +11,7 @@ public class FailureDetector {
   public static final Logger LOGGER = LoggerFactory.getLogger(FailureDetector.class);
   private final DescriptiveStatistics descriptiveStatistics;
   private final long minimumSamples;
-  private volatile long latestHeartbeatMs = -1;
+  private volatile long latestHeartbeatMillis = -1;
   private final String distribution;
 
   public FailureDetector(long minimumSamples, int windowSize, String distribution) {
@@ -21,26 +21,25 @@ public class FailureDetector {
   }
 
   /**
-   * Updates the statistics based on the delta between the last
-   * heartbeat and supplied time
+   * Updates the statistics based on the delta between the last heartbeat and supplied time.
    *
-   * @param now the time of the heartbeat in milliseconds
+   * @param nowMillis the heartbeat time in milliseconds.
    */
-  public synchronized void recordHeartbeat(long now) {
-    if (now <= latestHeartbeatMs) {
+  public synchronized void recordHeartbeat(long nowMillis) {
+    if (nowMillis <= latestHeartbeatMillis) {
       return;
     }
-    if (latestHeartbeatMs != -1) {
-      descriptiveStatistics.addValue(now - latestHeartbeatMs);
+    if (latestHeartbeatMillis != -1) {
+      descriptiveStatistics.addValue(nowMillis - latestHeartbeatMillis);
     }
-    latestHeartbeatMs = now;
+    latestHeartbeatMillis = nowMillis;
   }
 
-  public synchronized Double computePhiMeasure(long now) {
-    if (latestHeartbeatMs == -1 || descriptiveStatistics.getN() < minimumSamples) {
+  public synchronized Double computePhiMeasure(long nowMillis) {
+    if (latestHeartbeatMillis == -1 || descriptiveStatistics.getN() < minimumSamples) {
       return null;
     }
-    long delta = now - latestHeartbeatMs;
+    long delta = nowMillis - latestHeartbeatMillis;
     try {
       double probability;
       if (distribution.equals("normal")) {

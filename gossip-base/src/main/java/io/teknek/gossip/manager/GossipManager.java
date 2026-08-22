@@ -16,6 +16,7 @@ import io.teknek.gossip.event.data.UpdateSharedDataEventHandler;
 import io.teknek.gossip.lock.LockManager;
 import io.teknek.gossip.lock.exceptions.VoteFailedException;
 import io.teknek.gossip.manager.handlers.MessageHandler;
+import io.teknek.gossip.model.Base;
 import io.teknek.gossip.model.PerNodeDataMessage;
 import io.teknek.gossip.model.SharedDataMessage;
 import io.teknek.gossip.protocol.ProtocolManager;
@@ -80,7 +81,7 @@ public abstract class GossipManager {
     this.messageHandler = messageHandler;
 
     clock = new SystemClock();
-    me = new LocalMember(cluster, uri, id, clock.nanoTime(), properties,
+    me = new LocalMember(cluster, uri, id, clock.currentTimeMillis(), properties,
             settings.getWindowSize(), settings.getMinimumSamples(), settings.getDistribution());
     gossipCore = new GossipCore(this, registry);
     this.lockManager = new LockManager(this, settings.getLockManagerSettings(), registry);
@@ -90,7 +91,7 @@ public abstract class GossipManager {
       if (!startupMember.equals(me)) {
         LocalMember member = new LocalMember(startupMember.getClusterName(),
                 startupMember.getUri(), startupMember.getId(),
-                clock.nanoTime(), startupMember.getProperties(), settings.getWindowSize(),
+                clock.currentTimeMillis(), startupMember.getProperties(), settings.getWindowSize(),
                 settings.getMinimumSamples(), settings.getDistribution());
         //TODO should members start in down state?
         members.put(member, GossipState.DOWN);
@@ -189,7 +190,7 @@ public abstract class GossipManager {
       for (LocalMember l : ringState.readFromDisk()) {
         LocalMember member = new LocalMember(l.getClusterName(),
             l.getUri(), l.getId(),
-            clock.nanoTime(), l.getProperties(), settings.getWindowSize(),
+            clock.currentTimeMillis(), l.getProperties(), settings.getWindowSize(),
             settings.getMinimumSamples(), settings.getDistribution());
         members.putIfAbsent(member, GossipState.DOWN);
       }
@@ -228,6 +229,15 @@ public abstract class GossipManager {
       LOGGER.error("Interrupted while shutting down", e);
     }
     scheduledServiced.shutdownNow();
+  }
+
+  /**
+   * Receive a serialized gossip message from an externally-managed endpoint.
+   */
+  public void receive(byte[] buf) throws java.io.IOException {
+    Base message = protocolManager.read(buf);
+    gossipCore.receive(message);
+    memberStateRefresher.run();
   }
 
   public void gossipPerNodeData(PerNodeDataMessage message){

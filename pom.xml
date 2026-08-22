@@ -8,14 +8,17 @@
 		
 		<!-- dependency versions -->
 		<jackson.version>2.20.1</jackson.version>
+		<jackson.annotations.version>2.21</jackson.annotations.version>
 		<metrics.version>4.2.37</metrics.version>
 		<commons-math3.version>3.6.1</commons-math3.version>
 		<junit.jupiter.version>5.14.1</junit.jupiter.version>
 		<junit.platform.version>1.14.1</junit.platform.version>
 		<junit.vintage.version>5.14.1</junit.vintage.version>
+		<awaitility.version>4.3.0</awaitility.version>
 		<slf4j.version>2.0.17</slf4j.version>
 		<tunit.version>0.0.0</tunit.version>
 		<mockito.version>5.20.0</mockito.version>
+		<spring-boot.version>4.1.0</spring-boot.version>
 
 		<!-- plugins versions -->
 		<maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
@@ -40,8 +43,10 @@
 		<module>gossip-base</module>
 		<module>gossip-transport-udp</module>
 		<module>gossip-protocol-jackson</module>
+		<module>gossip-spring-boot-starter</module>
 		<module>gossip-itest</module>
 		<module>gossip-examples</module>
+		<module>gossip-spring-example</module>
 	</modules>
 	
 	<description>A peer to peer cluster discovery service</description>
@@ -85,6 +90,12 @@
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
 			<version>${mockito.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.awaitility</groupId>
+			<artifactId>awaitility</artifactId>
+			<version>${awaitility.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
